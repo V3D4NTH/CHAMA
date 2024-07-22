@@ -31,7 +31,7 @@ fn main() {
                         content_length, response_str
                     )
                 } else {
-                    "HTTP/1.1 404 Not Found\r\n\r\n"to_string()
+                    "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
                 };
 
                 let _ = stream.write_all(response.as_bytes()).unwrap();
