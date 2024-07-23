@@ -45,7 +45,7 @@ fn main() {
                         "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
                         content_length, response_str
                     );
-                    streamwrite_all(responpse.as_bytes()).unwrap();
+                    stream.write_all(response.as_bytes()).unwrap();
                 } else {
                     let response = "HTTP/1.1 404 Not Found\r\n\r\n".to_string();
                     let _ = stream.write_all(response.as_bytes()).unwrap();
