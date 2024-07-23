@@ -17,7 +17,7 @@ fn main() {
                 stream.read(&mut buffer).unwrap();
 
                 let request = String::from_utf8_lossy(&buffer[..]);
-                let headers = request.lines();
+                let mut headers = request.lines();
                 let request_line = request.lines().next().unwrap();
                 let url_path = request_line.split_whitespace().nth(1).unwrap();
                 if url_path == "/user-agent" {
