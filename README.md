@@ -1,39 +1,108 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/38e6c1f7-7020-49ac-8590-5dbecce995b6)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# CHAMA
 
-This is a starting point for Rust solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+------
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+CHAMA is a simple HTTP server implemented in Rust. It handles basic HTTP requests, supports gzip compression, and can handle concurrent connections.
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+```mermaid
+graph TD
+    A[Start] --> B[Parse Command Line Arguments]
+    B --> C{Directory Provided?}
+    C -->|Yes| D[Use Provided Directory]
+    C -->|No| E[Use Current Directory]
+    D --> F[Create TcpListener]
+    E --> F
+    F --> G[Listen for Incoming Connections]
+    G --> H[Accept Connection]
+    H --> I[Spawn New Thread]
+    I --> J[Read Request]
+    J --> K[Parse Request]
+    K --> L{Determine Request Type}
+    L -->|GET| M[Handle GET Request]
+    L -->|POST| N[Handle POST Request]
+    L -->|Other| O[Send 405 Method Not Allowed]
+    M --> P{Determine GET Path}
+    P -->|Root| Q[Send 200 OK]
+    P -->|/user-agent| R[Send User-Agent]
+    P -->|/files/*| S[Send File Contents]
+    P -->|/echo/*| T[Echo Path Content]
+    P -->|Other| U[Send 404 Not Found]
+    N --> V{Is /files/* Path?}
+    V -->|Yes| W[Write File]
+    V -->|No| X[Send 405 Method Not Allowed]
+    W --> Y[Send 201 Created]
+    
+    subgraph "Memory Management"
+    Z[Stack: Local Variables]
+    AA[Heap: Dynamic Allocations]
+    AB[File System: Stored Files]
+    end
+    
+    subgraph "Input/Output"
+    AC[Input: HTTP Requests]
+    AD[Output: HTTP Responses]
+    AE[File I/O: Read/Write]
+    end
+    
+    subgraph "Key Components"
+    AF[TcpListener]
+    AG[TcpStream]
+    AH[File Operations]
+    AI[GzEncoder]
+    end
+    
+    subgraph "Concurrency Model"
+    AJ[Thread per Connection]
+    end
+```
+<!-- Mermaid graph credit goes to aadhavr --->
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## Features
 
-# Passing the first stage
+The server handles HTTP GET and POST requests. It supports several endpoints including `/`, `/user-agent`, `/files/{filename}`, and `/echo/{str}`. It also supports gzip compression for responses if requested by the client. Additionally, the server is capable of handling concurrent connections using threads.
 
-The entry point for your HTTP server implementation is in `src/main.rs`. Study
-and uncomment the relevant code, and push your changes to pass the first stage:
+## Endpoints
 
+The server provides several endpoints. A GET request to `/` returns a `200 OK` response with an empty body. A GET request to `/user-agent` returns the `User-Agent` header value sent by the client. For the `/files/{filename}` endpoint, a GET request returns the content of the requested file if it exists, otherwise it returns a `404 Not Found` response. The `/echo/{str}` endpoint echoes the string provided in the URL. The server also supports POST requests to the `/files/{filename}` endpoint, saving the request body as a file with the given filename.
+
+
+
+## Usage
+
+To use this project, you need to have [Rust](https://www.rust-lang.org/tools/install) installed. First, clone the repository with the command:
 ```sh
-git add .
-git commit -m "pass 1st stage" # any msg
-git push origin master
+git clone https://github.com/V3D4NTH/CHAMA
+cd CHAMA
+```
+Build the project using:
+```sh
+cargo build --release
+```
+You can then run the server with:
+```sh
+./target/release/http-server-starter-rust --directory /path/to/serve
 ```
 
-Time to move on to the next stage!
+### Example Requests
 
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `cargo (1.70)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.rs`. This command compiles your Rust project, so it might be slow
-   the first time you run it. Subsequent runs will be fast.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+You can test the server with various example requests. For instance, a GET request to the root URL can be made using:
+```sh
+curl -v http://localhost:4221/
+```
+To test the `/user-agent` endpoint, you can use:
+```sh
+curl -v -H "User-Agent: custom-agent" http://localhost:4221/user-agent
+```
+To serve files, create a file and request it as follows:
+```sh
+echo "Hello, World!" > /tmp/hello.txt
+curl -v http://localhost:4221/files/hello.txt
+```
+For the echo endpoint, use:
+```sh
+curl -v http://localhost:4221/echo/hello
+```
+To save data to a file via a POST request, you can use:
+```sh
+curl -v -X POST --data "This is a test file." http://localhost:4221/files/test.txt
+```
