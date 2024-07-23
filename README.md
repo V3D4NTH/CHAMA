@@ -1,9 +1,16 @@
-# CHAMA
+# CHAMA 
 
 ------
 
-CHAMA is a simple HTTP server implemented in Rust. It handles basic HTTP requests, supports gzip compression, and can handle concurrent connections.
+CHAMA is an HTTP server written in Rust. CHAMA handles `HTTP`, `GET`, and `POST` requests. It provides several endpoints including `/`, `/user-agent`, `/files/{filename}`, and `/echo/{str}`. The server is capable of handling concurrent connections. Additionally, CHAMA supports gzip compression for responses, if requested by the client.
 
+
+<p align="center">
+<img align="center" src="https://media1.giphy.com/media/OMcUAlCUQOcNnXdU9j/giphy.webp?cid=ecf05e47cjpu4l5jqqoc8n4gci76350mauyjx3xpfjew4qzj&ep=v1_gifs_search&rid=giphy.webp&ct=g"/>
+</p>
+<br>
+
+## How CHAMA Works
 ```mermaid
 graph TD
     A[Start] --> B[Parse Command Line Arguments]
@@ -31,7 +38,7 @@ graph TD
     V -->|Yes| W[Write File]
     V -->|No| X[Send 405 Method Not Allowed]
     W --> Y[Send 201 Created]
-    
+
     subgraph "Memory Management"
     Z[Stack: Local Variables]
     AA[Heap: Dynamic Allocations]
@@ -43,7 +50,9 @@ graph TD
     AD[Output: HTTP Responses]
     AE[File I/O: Read/Write]
     end
+
     
+
     subgraph "Key Components"
     AF[TcpListener]
     AG[TcpStream]
@@ -55,21 +64,45 @@ graph TD
     AJ[Thread per Connection]
     end
 ```
-<!-- Mermaid graph credit goes to aadhavr --->
-
-## Features
-
-The server handles HTTP GET and POST requests. It supports several endpoints including `/`, `/user-agent`, `/files/{filename}`, and `/echo/{str}`. It also supports gzip compression for responses if requested by the client. Additionally, the server is capable of handling concurrent connections using threads.
+<br>
 
 ## Endpoints
 
 The server provides several endpoints. A GET request to `/` returns a `200 OK` response with an empty body. A GET request to `/user-agent` returns the `User-Agent` header value sent by the client. For the `/files/{filename}` endpoint, a GET request returns the content of the requested file if it exists, otherwise it returns a `404 Not Found` response. The `/echo/{str}` endpoint echoes the string provided in the URL. The server also supports POST requests to the `/files/{filename}` endpoint, saving the request body as a file with the given filename.
 
+<br>
 
+## CHAMA In Action
 
-## Usage
+ GET request to the root URL:
+```sh
+curl -v http://localhost:4221/
+```
+Testing the `/user-agent` endpoint:
+```sh
+curl -v -H "User-Agent: custom-agent" http://localhost:4221/user-agent
+```
+Requesting files:
+```sh
+echo "Hello, World!" > /tmp/hello.txt
+curl -v http://localhost:4221/files/hello.txt
+```
+Echo endpoint:
+```sh
+curl -v http://localhost:4221/echo/hello
+```
+Saving data to a file via a POST request:
+```sh
+curl -v -X POST --data "This is a test file." http://localhost:4221/files/test.txt
+```
 
-To use this project, you need to have [Rust](https://www.rust-lang.org/tools/install) installed. First, clone the repository with the command:
+<br>
+
+## Make It Your Own
+
+To use CHAMA, your system must have [Rust](https://www.rust-lang.org/tools/install) installed. 
+
+First, clone the repository with the command:
 ```sh
 git clone https://github.com/V3D4NTH/CHAMA
 cd CHAMA
@@ -83,26 +116,4 @@ You can then run the server with:
 ./target/release/http-server-starter-rust --directory /path/to/serve
 ```
 
-### Example Requests
 
-You can test the server with various example requests. For instance, a GET request to the root URL can be made using:
-```sh
-curl -v http://localhost:4221/
-```
-To test the `/user-agent` endpoint, you can use:
-```sh
-curl -v -H "User-Agent: custom-agent" http://localhost:4221/user-agent
-```
-To serve files, create a file and request it as follows:
-```sh
-echo "Hello, World!" > /tmp/hello.txt
-curl -v http://localhost:4221/files/hello.txt
-```
-For the echo endpoint, use:
-```sh
-curl -v http://localhost:4221/echo/hello
-```
-To save data to a file via a POST request, you can use:
-```sh
-curl -v -X POST --data "This is a test file." http://localhost:4221/files/test.txt
-```
