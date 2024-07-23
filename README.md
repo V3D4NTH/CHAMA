@@ -1,13 +1,23 @@
-# CHAMA 
+# CHAMA - An HTTP Server Written In Rust
 
 ------
 
-CHAMA is an HTTP server written in Rust. CHAMA handles `HTTP`, `GET`, and `POST` requests. It provides several endpoints including `/`, `/user-agent`, `/files/{filename}`, and `/echo/{str}`. The server is capable of handling concurrent connections. Additionally, CHAMA supports gzip compression for responses, if requested by the client.
+CHAMA can:
 
+🗿 Handle `HTTP`, `GET`, and `POST` requests. 
+
+🗿 Provide several endpoints such as `/`, `/user-agent`, `/files/{filename}`, and `/echo/{str}`.
+
+🗿 Manage concurrent connections. 
+
+🗿 Support gzip compression for responses if requested by the client.
+
+<br>
 
 <p align="center">
 <img align="center" src="https://media1.giphy.com/media/OMcUAlCUQOcNnXdU9j/giphy.webp?cid=ecf05e47cjpu4l5jqqoc8n4gci76350mauyjx3xpfjew4qzj&ep=v1_gifs_search&rid=giphy.webp&ct=g"/>
 </p>
+
 <br>
 
 ## How CHAMA Works
