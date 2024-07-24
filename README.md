@@ -1,6 +1,11 @@
-# CHAMA - An HTTP Server Written In Rust
+# CHAMA
 
 ------
+
+CHAMA is an HTTP server written in Rust.
+
+<br>
+
 
 CHAMA can:
 
